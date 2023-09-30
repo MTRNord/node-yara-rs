@@ -80,6 +80,7 @@ jobs:
           toolchain: stable
           targets: ${{ matrix.settings.target }}
       - name: Cache cargo
+        if: ${{ matrix.settings.host != 'arm64' }}
         uses: actions/cache@v3
         with:
           path: |
@@ -111,6 +112,10 @@ jobs:
           check-latest: true
           cache: yarn
           architecture: x86
+      - uses: cachix/install-nix-action@v22
+        if: ${{ matrix.settings.host == 'arm64' }}
+        with:
+          nix_path: nixpkgs=channel:nixos-23-05
       - name: Build
         run: ${{ matrix.settings.build }}
         shell: bash
