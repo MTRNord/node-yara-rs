@@ -1,7 +1,7 @@
 #![deny(clippy::all)]
 
 use napi::{anyhow::Context, bindgen_prelude::Buffer, Result};
-use yara::{Compiler, Rules};
+use yara::{Compiler, Rule as ExtYaraRule, Rules};
 
 #[macro_use]
 extern crate napi_derive;
@@ -134,15 +134,8 @@ impl YaraScanner {
     Ok(YaraScanner { rules })
   }
 
-  #[napi]
-  pub fn scan_buffer(&self, buffer: Buffer, timeout: i32) -> Result<Vec<YaraRuleResult>> {
-    let buf: Vec<u8> = buffer.into();
-    let results = self
-      .rules
-      .scan_mem(&buf, timeout)
-      .context("Failed to scan buffer")?;
-
-    let napi_results = results
+  fn convert_yara_results(&self, rules: Vec<ExtYaraRule>) -> Vec<YaraRuleResult> {
+    rules
       .iter()
       .map(|rule| YaraRuleResult {
         identifier: rule.identifier.to_string(),
@@ -163,8 +156,28 @@ impl YaraScanner {
           })
           .collect(),
       })
-      .collect();
+      .collect()
+  }
 
-    Ok(napi_results)
+  #[napi]
+  pub fn scan_buffer(&self, buffer: Buffer, timeout: i32) -> Result<Vec<YaraRuleResult>> {
+    let buf: Vec<u8> = buffer.into();
+    let results = self
+      .rules
+      .scan_mem(&buf, timeout)
+      .context("Failed to scan buffer")?;
+
+    Ok(self.convert_yara_results(results))
+  }
+
+  #[napi]
+  pub fn scan_string(&self, input: String, timeout: i32) -> Result<Vec<YaraRuleResult>> {
+    let buf: &[u8] = input.as_bytes();
+    let results = self
+      .rules
+      .scan_mem(buf, timeout)
+      .context("Failed to scan buffer")?;
+
+    Ok(self.convert_yara_results(results))
   }
 }

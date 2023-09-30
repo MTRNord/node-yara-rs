@@ -22,6 +22,7 @@ export interface YaraVariable {
 export class YaraScanner {
   constructor(rules: Array<YaraRule>, variables: Array<YaraVariable>)
   scanBuffer(buffer: Buffer, timeout: number): Array<YaraRuleResult>
+  scanString(input: string, timeout: number): Array<YaraRuleResult>
 }
 export class YaraRuleResult {
   /** Name of the rule. */
