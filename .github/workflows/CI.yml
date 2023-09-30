@@ -28,6 +28,10 @@ jobs:
           - host: macos-latest
             target: x86_64-apple-darwin
             build: |
+              brew install autoconf
+              brew install automake
+              brew install libtool
+              brew install pkg-config
               make build
               strip -x *.node
           - host: windows-latest
@@ -44,6 +48,10 @@ jobs:
           - host: macos-latest
             target: aarch64-apple-darwin
             build: |
+              brew install autoconf
+              brew install automake
+              brew install libtool
+              brew install pkg-config
               make yara
               yarn build --target aarch64-apple-darwin
               strip -x *.node
