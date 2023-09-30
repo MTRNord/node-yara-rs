@@ -32,6 +32,7 @@ jobs:
               brew install automake
               brew install libtool
               brew install pkg-config
+              brew install libmagic
               make build
               strip -x *.node
           # - host: windows-latest
@@ -42,7 +43,7 @@ jobs:
             docker: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-debian
             build: |-
               set -e &&
-              sudo apt-get install -y automake libtool make gcc pkg-config &&
+              sudo apt-get install -y automake libtool make gcc pkg-config libmagic &&
               make yara &&
               yarn build --target x86_64-unknown-linux-gnu &&
               strip *.node
@@ -53,6 +54,7 @@ jobs:
               brew install automake
               brew install libtool
               brew install pkg-config
+              brew install libmagic
               make yara
               yarn build --target aarch64-apple-darwin
               strip -x *.node
@@ -61,7 +63,7 @@ jobs:
             docker: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-debian-aarch64
             build: |-
               set -e &&
-              sudo apt-get install -y automake libtool make gcc pkg-config &&
+              sudo apt-get install -y automake libtool make gcc pkg-config libmagic &&
               make yara &&
               yarn build --target aarch64-unknown-linux-gnu &&
               aarch64-unknown-linux-gnu-strip *.node
