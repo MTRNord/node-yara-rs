@@ -62,7 +62,7 @@ jobs:
             target: aarch64-unknown-linux-gnu
             build: |-
               set -e &&
-              nix-shell -p pkg-config openssl gnumake autoconf automake libtool protobufc pcre clang gcc napi-rs-cli --keep YARA_LIBRARY_PATH --keep YARA_INCLUDE_DIR --keep LIBCLANG_PATH --keep BINDGEN_EXTRA_CLANG_ARGS --run "napi build --platform --release --target aarch64-unknown-linux-gnu" &&
+              NIX_PATH=nixpkgs=flake:nixpkgs nix-shell -p pkg-config openssl gnumake autoconf automake libtool protobufc pcre clang gcc napi-rs-cli --keep YARA_LIBRARY_PATH --keep YARA_INCLUDE_DIR --keep LIBCLANG_PATH --keep BINDGEN_EXTRA_CLANG_ARGS --run "napi build --platform --release --target aarch64-unknown-linux-gnu" &&
               aarch64-unknown-linux-gnu-strip *.node
     name: stable - ${{ matrix.settings.target }} - node@18
     runs-on: ${{ matrix.settings.host }}
@@ -112,10 +112,6 @@ jobs:
           check-latest: true
           cache: yarn
           architecture: x86
-      - uses: cachix/install-nix-action@v22
-        if: ${{ matrix.settings.host == 'arm64' }}
-        with:
-          nix_path: nixpkgs=channel:nixos-23-05
       - name: Build
         run: ${{ matrix.settings.build }}
         shell: bash
