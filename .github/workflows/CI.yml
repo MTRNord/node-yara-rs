@@ -61,8 +61,7 @@ jobs:
             target: aarch64-unknown-linux-gnu
             build: |-
               set -e &&
-              make yara &&
-              yarn build --target aarch64-unknown-linux-gnu &&
+              YARA_LIBRARY_PATH="/nix/store/58z9vbdxygkfgiw41in3hmha7qbgjzhp-yara-4.3.1/lib/" YARA_INCLUDE_DIR="/nix/store/58z9vbdxygkfgiw41in3hmha7qbgjzhp-yara-4.3.1/include/" yarn build --target aarch64-unknown-linux-gnu &&
               aarch64-unknown-linux-gnu-strip *.node
     name: stable - ${{ matrix.settings.target }} - node@18
     runs-on: ${{ matrix.settings.host }}
