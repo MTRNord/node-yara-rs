@@ -28,6 +28,7 @@ yara:
 					--enable-static \
 					--disable-shared \
 					--with-pic \
+					--without-crypto \
 					--prefix=$(BASE)/build/yara
 	cd $(BASE)/deps/yara-$(YARA) && make
 	cd $(BASE)/deps/yara-$(YARA) && make install
