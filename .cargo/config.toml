@@ -1,0 +1,3 @@
+[env]
+YARA_LIBRARY_PATH = { value = "build/yara/lib", relative = true }
+YARA_INCLUDE_DIR = { value = "build/yara/include", relative = true }
