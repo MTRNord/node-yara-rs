@@ -61,7 +61,7 @@ jobs:
             target: aarch64-unknown-linux-gnu
             build: |-
               set -e &&
-              YARA_LIBRARY_PATH=$(pkg-config --libs yara | sed 's/-L//g; s/ -lyara//g') YARA_INCLUDE_DIR=$(pkg-config --libs yara | sed 's/-L//g; s/ -lyara//g' | sed 's/lib/include/g') yarn build --target aarch64-unknown-linux-gnu &&
+              yarn build --target aarch64-unknown-linux-gnu &&
               aarch64-unknown-linux-gnu-strip *.node
     name: stable - ${{ matrix.settings.target }} - node@18
     runs-on: ${{ matrix.settings.host }}
