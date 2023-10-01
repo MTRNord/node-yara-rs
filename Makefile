@@ -9,8 +9,6 @@ endif
 
 ifeq ($(findstring arm64,$(CFLAGS)),arm64)
 CFGOPTS += --host=aarch64-apple-darwin
-else
-CFGOPTS += --with-crypto
 endif
 
 YARA?=4.3.2
