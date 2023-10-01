@@ -1,6 +1,6 @@
 {
   "name": "@node_yara_rs/node-yara-rs",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "main": "index.js",
   "types": "index.d.ts",
   "napi": {
