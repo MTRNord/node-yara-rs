@@ -116,4 +116,5 @@ export class YaraScanner {
    * @returns The results of yara scan_mem.
    */
   scanProcess(pid: number): Array<YaraRuleResult>
+  defineVariable(identifier: string, stringValue?: string | undefined | null, integerValue?: number | undefined | null, floatValue?: number | undefined | null, boolValue?: boolean | undefined | null): void
 }
