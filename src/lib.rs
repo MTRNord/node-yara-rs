@@ -1,7 +1,7 @@
 #![deny(clippy::all)]
 
 use napi::{
-  anyhow::Context,
+  anyhow::{anyhow, Context},
   bindgen_prelude::{Buffer, Reference, SharedReference},
   Env, Result,
 };
@@ -291,5 +291,47 @@ impl YaraScanner {
       .context("Failed to scan file")?;
 
     Ok(self.convert_yara_results(results))
+  }
+
+  #[napi]
+  pub fn define_variable(
+    &mut self,
+    identifier: String,
+    string_value: Option<String>,
+    integer_value: Option<i64>,
+    float_value: Option<f64>,
+    bool_value: Option<bool>,
+  ) -> Result<()> {
+    if let Some(string_value) = string_value {
+      Ok(
+        self
+          .scanner
+          .define_variable(&identifier, string_value.as_str())
+          .context(format!("Failed to define string variable: {identifier}"))?,
+      )
+    } else if let Some(bool_value) = bool_value {
+      Ok(
+        self
+          .scanner
+          .define_variable(&identifier, bool_value)
+          .context(format!("Failed to define bool variable: {identifier}"))?,
+      )
+    } else if let Some(float_value) = float_value {
+      Ok(
+        self
+          .scanner
+          .define_variable(&identifier, float_value)
+          .context(format!("Failed to define float variable: {identifier}"))?,
+      )
+    } else if let Some(integer_value) = integer_value {
+      Ok(
+        self
+          .scanner
+          .define_variable(&identifier, integer_value)
+          .context(format!("Failed to define integer variable: {identifier}"))?,
+      )
+    } else {
+      Err(anyhow!("You must at least define one of the value types!").into())
+    }
   }
 }
