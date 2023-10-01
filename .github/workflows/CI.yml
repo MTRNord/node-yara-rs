@@ -54,6 +54,7 @@ jobs:
               brew install libtool
               brew install pkg-config
               brew install libmagic
+              brew install openssl@3
               CFLAGS="-target arm64-apple-macos11" make yara
               yarn build --target aarch64-apple-darwin
               strip -x *.node
