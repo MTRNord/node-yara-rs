@@ -1,20 +1,20 @@
 import test from 'ava'
 
-import { YaraScanner } from '../index.js'
+import { YaraCompiler } from '../index.js'
 
 const TEST_RULE = "rule TestRule {\n    condition:\n        true\n}"
 
-test('can construct YaraScanner', (t) => {
+test('can construct YaraCompiler', (t) => {
   t.plan(1)
   t.notThrows(() => {
-    const scanner = new YaraScanner([], []);
+    const compiler = new YaraCompiler([], []);
   });
 })
 
 test('can load string rules', (t) => {
   t.plan(1)
   t.notThrows(() => {
-    const scanner = new YaraScanner([{
+    const compiler = new YaraCompiler([{
       string: TEST_RULE
     }], []);
   });
@@ -24,9 +24,10 @@ test('can load string rules', (t) => {
 test('can match string rules', (t) => {
   t.plan(2)
   t.notThrows(() => {
-    const scanner = new YaraScanner([{
+    const compiler = new YaraCompiler([{
       string: TEST_RULE
     }], []);
+    const scanner = compiler.newScanner();
     const result = scanner.scanString("");
     t.deepEqual(result, [
       {

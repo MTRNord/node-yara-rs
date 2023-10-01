@@ -52,8 +52,68 @@ export interface YaraMatch {
   /** Matched data. */
   data: Array<number>
 }
-export class YaraScanner {
+/**
+ * An interface to use yara with node in a stable manner using Rust
+ * @public
+ */
+export class YaraCompiler {
+  /**
+   * Constructs a new Yara instance and compiles the provided rules and variables.
+   *
+   * @param rules - The rules which shall be compiled.
+   * @param variables - The variables you want to pass to the rules.
+   * @throws This can throw if there is an unexpected error.
+   *
+   * @returns A new instance of a YaraScanner which can be used to scan data
+   */
   constructor(rules: Array<YaraRule>, variables: Array<YaraVariable>)
+  /**
+   * Creates a new yara scanner for the rules defined earlier.
+   * This can be called multiple times
+   *
+   * @returns A {@link YaraScanner} instance
+   */
+  newScanner(): YaraScanner
+}
+/**
+ * An interface to use yara with node in a stable manner using Rust
+ * @public
+ */
+export class YaraScanner {
+  /**
+   * Scan a buffer of data with yara
+   *
+   * @param buffer - The data which shall be scanned by yara.
+   * @throws This can throw if there is an unexpected error.
+   *
+   * @returns The results of yara scan_mem.
+   */
   scanBuffer(buffer: Buffer): Array<YaraRuleResult>
+  /**
+   * Scan a string of data with yara
+   *
+   * @param input - The data which shall be scanned by yara.
+   * @throws This can throw if there is an unexpected error.
+   *
+   * @returns The results of yara scan_mem.
+   */
   scanString(input: string): Array<YaraRuleResult>
+  /**
+   * Scan a file with yara
+   *
+   * @param filepath - The path to the file yara shall scan
+   * @throws This can throw if there is an unexpected error.
+   *
+   * @returns The results of yara scan_mem.
+   */
+  scanFile(filepath: string): Array<YaraRuleResult>
+  /**
+   * Scan a process with yara
+   *
+   * @param pid - The process id of the process that shall be scanned.
+   * @throws This can throw if there is an unexpected error.
+   *
+   * @returns The results of yara scan_mem.
+   */
+  scanProcess(pid: number): Array<YaraRuleResult>
 }

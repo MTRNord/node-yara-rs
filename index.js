@@ -252,6 +252,7 @@ if (!nativeBinding) {
   throw new Error(`Failed to load native binding`)
 }
 
-const { YaraScanner } = nativeBinding
+const { YaraCompiler, YaraScanner } = nativeBinding
 
+module.exports.YaraCompiler = YaraCompiler
 module.exports.YaraScanner = YaraScanner
