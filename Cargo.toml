@@ -19,4 +19,4 @@ yara = { version = "0.21.0", features = ["yara-static"] }
 napi-build = "2.0.1"
 
 [profile.release]
-lto = false
+lto = true
