@@ -15,6 +15,9 @@ napi = { version = "2.12.2", default-features = false, features = [
 napi-derive = "2.12.2"
 yara = { version = "0.21.0", features = ["yara-static", "openssl-static"] }
 
+[target.aarch64-apple-darwin.dependencies]
+yara = { version = "0.21.0", features = ["yara-static"] }
+
 [build-dependencies]
 napi-build = "2.0.1"
 

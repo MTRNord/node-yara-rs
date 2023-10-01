@@ -1,8 +1,6 @@
 BASE=$(shell pwd)
 OSNAME=$(shell uname)
 
-CFGOPTS += --with-crypto
-
 ifeq ($(OSNAME),Darwin)
 CFLAGS  += -I/usr/local/include/node
 CFLAGS  += -I/usr/local/include
@@ -10,7 +8,9 @@ LDFLAGS += -L/usr/local/lib
 endif
 
 ifeq ($(findstring arm64,$(CFLAGS)),arm64)
-	CFGOPTS += --host=aarch64-apple-darwin
+CFGOPTS += --host=aarch64-apple-darwin
+else
+CFGOPTS += --with-crypto
 endif
 
 YARA?=4.3.2
