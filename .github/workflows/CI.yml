@@ -100,7 +100,6 @@ jobs:
         if: matrix.settings.target == 'i686-pc-windows-msvc'
         run: yarn config set supportedArchitectures.cpu "ia32"
         shell: bash
-        shell: bash
       - name: Install dependencies
         run: yarn install
       - name: Setup node x86
