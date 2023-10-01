@@ -147,7 +147,6 @@ jobs:
           cache: yarn
       - name: Install dependencies
         run: |
-          brew install yara
           yarn install
       - name: Download artifacts
         uses: actions/download-artifact@v3
