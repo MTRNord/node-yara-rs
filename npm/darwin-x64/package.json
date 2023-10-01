@@ -11,9 +11,9 @@
   "files": [
     "node-yara-rs.darwin-x64.node"
   ],
-  "license": "MIT",
+  "license": "Apache-2.0",
   "engines": {
-    "node": ">= 10"
+    "node": ">= 18"
   },
   "repository": "https://github.com/MTRNord/node-yara-rs.git"
 }
