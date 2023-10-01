@@ -116,7 +116,7 @@ switch (platform) {
         nativeBinding = require('@node_yara_rs/node-yara-rs-darwin-universal')
       }
       break
-    } catch {}
+    } catch { }
     switch (arch) {
       case 'x64':
         localFileExisted = existsSync(join(__dirname, 'node-yara-rs.darwin-x64.node'))
