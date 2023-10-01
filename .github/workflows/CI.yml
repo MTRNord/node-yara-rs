@@ -43,6 +43,7 @@ jobs:
             build: |-
               set -e &&
               sudo apt-get install -y automake libtool make gcc pkg-config libmagic-dev libssl-dev &&
+              make debug_results &&
               make yara &&
               yarn build --target x86_64-unknown-linux-gnu &&
               strip *.node
