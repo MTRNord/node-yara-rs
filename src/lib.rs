@@ -1,12 +1,13 @@
 #![deny(clippy::all)]
 
 use napi::{anyhow::Context, bindgen_prelude::Buffer, Result};
-use yara::{Compiler, Rule as ExtYaraRule, Rules};
+use yara::{Compiler, MetadataValue, Rule as ExtYaraRule, Rules};
 
 #[macro_use]
 extern crate napi_derive;
 
 #[napi(object)]
+#[derive(Debug)]
 pub struct YaraRule {
   pub filename: Option<String>,
   pub string: Option<String>,
@@ -14,6 +15,7 @@ pub struct YaraRule {
 }
 
 #[napi(object)]
+#[derive(Debug)]
 pub struct YaraVariable {
   pub id: String,
   /// Limitation of napi-rs which doesnt support any
@@ -31,40 +33,40 @@ pub struct YaraScanner {
   rules: Rules,
 }
 
-#[napi]
+#[napi(object)]
+#[derive(Debug)]
 pub struct YaraRuleResult {
   /// Name of the rule.
   pub identifier: String,
   /// Namespace of the rule.
   pub namespace: String,
   /// Metadatas of the rule.
-  #[napi(ts_type = "Array<YaraRuleMetadata>")]
-  pub metadatas: Vec<serde_json::Value>,
+  pub metadatas: Vec<YaraRuleMetadata>,
   /// Tags of the rule.
   pub tags: Vec<String>,
   /// Matcher strings of the rule.
-  #[napi(ts_type = "Array<YaraString>")]
-  pub strings: Vec<serde_json::Value>,
+  pub strings: Vec<YaraString>,
 }
 
-#[napi]
+#[napi(object)]
+#[derive(Debug, Default)]
 pub struct YaraRuleMetadata {
   pub identifier: String,
-  pub integer_value: i64,
-  pub string_value: String,
-  pub bool_value: bool,
+  pub integer_value: Option<i64>,
+  pub string_value: Option<String>,
+  pub bool_value: Option<bool>,
 }
 
-#[napi]
+#[napi(object)]
+#[derive(Debug)]
 pub struct YaraString {
   /// Name of the string, with the '$'.
   pub identifier: String,
   /// Matches of the string for the scan.
-  #[napi(ts_type = "Array<YaraMatch>")]
-  pub matches: Vec<serde_json::Value>,
+  pub matches: Vec<YaraMatch>,
 }
 
-#[napi]
+#[napi(object)]
 #[derive(Debug, Clone)]
 pub struct YaraMatch {
   // base offset of the memory block in which the match occurred.
@@ -135,7 +137,7 @@ impl YaraScanner {
   }
 
   fn convert_yara_results(&self, rules: Vec<ExtYaraRule>) -> Vec<YaraRuleResult> {
-    rules
+    let results = rules
       .iter()
       .map(|rule| YaraRuleResult {
         identifier: rule.identifier.to_string(),
@@ -143,40 +145,61 @@ impl YaraScanner {
         metadatas: rule
           .metadatas
           .iter()
-          .map(|metadata| {
-            serde_json::to_value(metadata).expect("Failed to serialize metadata in result")
+          .map(|metadata| match metadata.value {
+            MetadataValue::Integer(int) => YaraRuleMetadata {
+              identifier: metadata.identifier.to_string(),
+              integer_value: Some(int),
+              ..Default::default()
+            },
+            MetadataValue::String(string) => YaraRuleMetadata {
+              identifier: metadata.identifier.to_string(),
+              string_value: Some(string.to_string()),
+              ..Default::default()
+            },
+            MetadataValue::Boolean(boolean) => YaraRuleMetadata {
+              identifier: metadata.identifier.to_string(),
+              bool_value: Some(boolean),
+              ..Default::default()
+            },
           })
           .collect(),
         tags: rule.tags.iter().map(ToString::to_string).collect(),
         strings: rule
           .strings
           .iter()
-          .map(|string| {
-            serde_json::to_value(string).expect("Failed to serialize metadata in result")
+          .map(|string| YaraString {
+            identifier: string.identifier.to_string(),
+            matches: string
+              .matches
+              .iter()
+              .map(|matches| YaraMatch {
+                base: matches.base as i64,
+                offset: matches.offset as i64,
+                length: matches.length as i64,
+                data: matches.data.clone(),
+              })
+              .collect(),
           })
           .collect(),
       })
-      .collect()
+      .collect();
+    results
   }
 
   #[napi]
-  pub fn scan_buffer(&self, buffer: Buffer, timeout: i32) -> Result<Vec<YaraRuleResult>> {
+  pub fn scan_buffer(&self, buffer: Buffer) -> Result<Vec<YaraRuleResult>> {
+    let mut scanner = self.rules.scanner().context("Failed to get scanner")?;
     let buf: Vec<u8> = buffer.into();
-    let results = self
-      .rules
-      .scan_mem(&buf, timeout)
-      .context("Failed to scan buffer")?;
+    let results = scanner.scan_mem(&buf).context("Failed to scan buffer")?;
 
     Ok(self.convert_yara_results(results))
   }
 
   #[napi]
-  pub fn scan_string(&self, input: String, timeout: i32) -> Result<Vec<YaraRuleResult>> {
+  pub fn scan_string(&self, input: String) -> Result<Vec<YaraRuleResult>> {
+    let mut scanner = self.rules.scanner().context("Failed to get scanner")?;
     let buf: &[u8] = input.as_bytes();
-    let results = self
-      .rules
-      .scan_mem(buf, timeout)
-      .context("Failed to scan buffer")?;
+    let results = scanner.scan_mem(buf).context("Failed to scan buffer")?;
 
     Ok(self.convert_yara_results(results))
   }

@@ -19,12 +19,7 @@ export interface YaraVariable {
   /** Limitation of napi-rs which doesnt support any */
   stringValue?: string
 }
-export class YaraScanner {
-  constructor(rules: Array<YaraRule>, variables: Array<YaraVariable>)
-  scanBuffer(buffer: Buffer, timeout: number): Array<YaraRuleResult>
-  scanString(input: string, timeout: number): Array<YaraRuleResult>
-}
-export class YaraRuleResult {
+export interface YaraRuleResult {
   /** Name of the rule. */
   identifier: string
   /** Namespace of the rule. */
@@ -36,19 +31,19 @@ export class YaraRuleResult {
   /** Matcher strings of the rule. */
   strings: Array<YaraString>
 }
-export class YaraRuleMetadata {
+export interface YaraRuleMetadata {
   identifier: string
-  integerValue: number
-  stringValue: string
-  boolValue: boolean
+  integerValue?: number
+  stringValue?: string
+  boolValue?: boolean
 }
-export class YaraString {
+export interface YaraString {
   /** Name of the string, with the '$'. */
   identifier: string
   /** Matches of the string for the scan. */
   matches: Array<YaraMatch>
 }
-export class YaraMatch {
+export interface YaraMatch {
   base: number
   /** Offset of the match within the scanning area. */
   offset: number
@@ -56,4 +51,9 @@ export class YaraMatch {
   length: number
   /** Matched data. */
   data: Array<number>
+}
+export class YaraScanner {
+  constructor(rules: Array<YaraRule>, variables: Array<YaraVariable>)
+  scanBuffer(buffer: Buffer): Array<YaraRuleResult>
+  scanString(input: string): Array<YaraRuleResult>
 }
