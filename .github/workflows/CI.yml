@@ -149,7 +149,9 @@ jobs:
           check-latest: true
           cache: yarn
       - name: Install dependencies
-        run: yarn install
+        run: |
+          brew install yara
+          yarn install
       - name: Download artifacts
         uses: actions/download-artifact@v3
         with:
@@ -181,7 +183,9 @@ jobs:
           check-latest: true
           cache: yarn
       - name: Install dependencies
-        run: yarn install
+        run: |
+          sudo apt-get install -y yara
+          yarn install
       - name: Download artifacts
         uses: actions/download-artifact@v3
         with:
