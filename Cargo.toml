@@ -13,10 +13,10 @@ napi = { version = "2.12.2", default-features = false, features = [
     "error_anyhow",
 ] }
 napi-derive = "2.12.2"
-yara = { version = "0.21.0" }
+yara = { version = "0.21.0", features = ["yara-static", "openssl-static"] }
 
 [build-dependencies]
 napi-build = "2.0.1"
 
 [profile.release]
-lto = true
+lto = false
