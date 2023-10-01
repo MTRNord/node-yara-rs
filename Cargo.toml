@@ -15,6 +15,9 @@ napi = { version = "2.12.2", default-features = false, features = [
 napi-derive = "2.12.2"
 yara = { version = "0.21.0", features = ["yara-static"] }
 
+[target.x86_64-pc-windows-msvc.dependencies]
+yara = { version = "0.21.0", features = ["yara-static", "vendored"] }
+
 [build-dependencies]
 napi-build = "2.0.1"
 
