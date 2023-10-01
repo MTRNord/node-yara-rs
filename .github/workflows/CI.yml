@@ -232,10 +232,13 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           path: artifacts
+      - name: List packages
+        run: ls -laR ./
+        shell: bash
       - name: Move artifacts
         run: yarn artifacts
       - name: List packages
-        run: ls -R ./npm
+        run: ls -laR ./npm
         shell: bash
       - name: Publish
         run: |
