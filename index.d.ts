@@ -10,14 +10,7 @@ export interface YaraRule {
 }
 export interface YaraVariable {
   id: string
-  /** Limitation of napi-rs which doesnt support any */
-  integerValue?: number
-  /** Limitation of napi-rs which doesnt support any */
-  floatValue?: number
-  /** Limitation of napi-rs which doesnt support any */
-  boolValue?: boolean
-  /** Limitation of napi-rs which doesnt support any */
-  stringValue?: string
+  value: number | number | boolean | string
 }
 export interface YaraRuleResult {
   /** Name of the rule. */
@@ -33,9 +26,7 @@ export interface YaraRuleResult {
 }
 export interface YaraRuleMetadata {
   identifier: string
-  integerValue?: number
-  stringValue?: string
-  boolValue?: boolean
+  value: number | string | boolean
 }
 export interface YaraString {
   /** Name of the string, with the '$'. */
@@ -116,5 +107,5 @@ export class YaraScanner {
    * @returns The results of yara scan_mem.
    */
   scanProcess(pid: number): Array<YaraRuleResult>
-  defineVariable(identifier: string, stringValue?: string | undefined | null, integerValue?: number | undefined | null, floatValue?: number | undefined | null, boolValue?: boolean | undefined | null): void
+  defineVariable(identifier: string, value: string | number | number | boolean): void
 }

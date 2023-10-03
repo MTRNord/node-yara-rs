@@ -1,8 +1,8 @@
 #![deny(clippy::all)]
 
 use napi::{
-  anyhow::{anyhow, Context},
-  bindgen_prelude::{Buffer, Reference, SharedReference},
+  anyhow::Context,
+  bindgen_prelude::{Buffer, Either3, Either4, Reference, SharedReference},
   Env, Result,
 };
 use yara::{Compiler, MetadataValue, Rule as ExtYaraRule, Rules, Scanner};
@@ -22,14 +22,7 @@ pub struct YaraRule {
 #[derive(Debug)]
 pub struct YaraVariable {
   pub id: String,
-  /// Limitation of napi-rs which doesnt support any
-  pub integer_value: Option<i64>,
-  /// Limitation of napi-rs which doesnt support any
-  pub float_value: Option<f64>,
-  /// Limitation of napi-rs which doesnt support any
-  pub bool_value: Option<bool>,
-  /// Limitation of napi-rs which doesnt support any
-  pub string_value: Option<String>,
+  pub value: Either4<i64, f64, bool, String>,
 }
 
 /// An interface to use yara with node in a stable manner using Rust
@@ -62,12 +55,10 @@ pub struct YaraRuleResult {
 }
 
 #[napi(object)]
-#[derive(Debug, Default)]
+#[derive(Debug)]
 pub struct YaraRuleMetadata {
   pub identifier: String,
-  pub integer_value: Option<i64>,
-  pub string_value: Option<String>,
-  pub bool_value: Option<bool>,
+  pub value: Either3<i64, String, bool>,
 }
 
 #[napi(object)]
@@ -107,22 +98,27 @@ impl YaraCompiler {
 
     // Load variables
     for variable in variables {
-      if let Some(string_value) = variable.string_value {
-        compiler
-          .define_variable(&variable.id, string_value.as_str())
-          .context(format!("Failed to set variable with id: {}", variable.id))?;
-      } else if let Some(bool_value) = variable.bool_value {
-        compiler
-          .define_variable(&variable.id, bool_value)
-          .context(format!("Failed to set variable with id: {}", variable.id))?;
-      } else if let Some(float_value) = variable.float_value {
-        compiler
-          .define_variable(&variable.id, float_value)
-          .context(format!("Failed to set variable with id: {}", variable.id))?;
-      } else if let Some(integer_value) = variable.integer_value {
-        compiler
-          .define_variable(&variable.id, integer_value)
-          .context(format!("Failed to set variable with id: {}", variable.id))?;
+      match variable.value {
+        Either4::A(integer_value) => {
+          compiler
+            .define_variable(&variable.id, integer_value)
+            .context(format!("Failed to set variable with id: {}", variable.id))?;
+        }
+        Either4::B(float_value) => {
+          compiler
+            .define_variable(&variable.id, float_value)
+            .context(format!("Failed to set variable with id: {}", variable.id))?;
+        }
+        Either4::C(bool_value) => {
+          compiler
+            .define_variable(&variable.id, bool_value)
+            .context(format!("Failed to set variable with id: {}", variable.id))?;
+        }
+        Either4::D(string_value) => {
+          compiler
+            .define_variable(&variable.id, string_value.as_str())
+            .context(format!("Failed to set variable with id: {}", variable.id))?;
+        }
       }
     }
 
@@ -189,18 +185,15 @@ impl YaraScanner {
           .map(|metadata| match metadata.value {
             MetadataValue::Integer(int) => YaraRuleMetadata {
               identifier: metadata.identifier.to_string(),
-              integer_value: Some(int),
-              ..Default::default()
+              value: Either3::A(int),
             },
             MetadataValue::String(string) => YaraRuleMetadata {
               identifier: metadata.identifier.to_string(),
-              string_value: Some(string.to_string()),
-              ..Default::default()
+              value: Either3::B(string.to_string()),
             },
             MetadataValue::Boolean(boolean) => YaraRuleMetadata {
               identifier: metadata.identifier.to_string(),
-              bool_value: Some(boolean),
-              ..Default::default()
+              value: Either3::C(boolean),
             },
           })
           .collect(),
@@ -297,41 +290,33 @@ impl YaraScanner {
   pub fn define_variable(
     &mut self,
     identifier: String,
-    string_value: Option<String>,
-    integer_value: Option<i64>,
-    float_value: Option<f64>,
-    bool_value: Option<bool>,
+    value: Either4<String, i64, f64, bool>,
   ) -> Result<()> {
-    if let Some(string_value) = string_value {
-      Ok(
+    match value {
+      Either4::A(string_value) => Ok(
         self
           .scanner
           .define_variable(&identifier, string_value.as_str())
           .context(format!("Failed to define string variable: {identifier}"))?,
-      )
-    } else if let Some(bool_value) = bool_value {
-      Ok(
+      ),
+      Either4::B(bool_value) => Ok(
         self
           .scanner
           .define_variable(&identifier, bool_value)
           .context(format!("Failed to define bool variable: {identifier}"))?,
-      )
-    } else if let Some(float_value) = float_value {
-      Ok(
+      ),
+      Either4::C(float_value) => Ok(
         self
           .scanner
           .define_variable(&identifier, float_value)
           .context(format!("Failed to define float variable: {identifier}"))?,
-      )
-    } else if let Some(integer_value) = integer_value {
-      Ok(
+      ),
+      Either4::D(integer_value) => Ok(
         self
           .scanner
           .define_variable(&identifier, integer_value)
           .context(format!("Failed to define integer variable: {identifier}"))?,
-      )
-    } else {
-      Err(anyhow!("You must at least define one of the value types!").into())
+      ),
     }
   }
 }
