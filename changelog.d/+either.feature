@@ -1,1 +1,0 @@
-Improve the arguments by utilizing the napi Either type
