@@ -55,7 +55,8 @@ jobs:
               brew install automake
               brew install libtool
               brew install pkg-config
-              brew install --bottle-tag=arm64_monterey jansson
+              brew fetch --force --bottle-tag=arm64_monterey jansson
+              brew install $(brew --cache --bottle-tag=arm64_monterey jansson)
               CFLAGS="-target arm64-apple-macos11" make yara
               brew install llvm
               yarn build --target aarch64-apple-darwin
