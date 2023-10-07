@@ -1,3 +1,10 @@
+# node-yara-rs 0.5.0 (2023-10-08)
+
+### Features
+
+- Add a json module to the used yara version
+
+
 # node-yara-rs 0.4.0 (2023-10-05)
 
 ### Features

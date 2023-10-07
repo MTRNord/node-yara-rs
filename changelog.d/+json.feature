@@ -1,1 +1,0 @@
-Add a json module to the used yara version
