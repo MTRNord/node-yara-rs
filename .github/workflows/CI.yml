@@ -55,9 +55,9 @@ jobs:
               brew install automake
               brew install libtool
               brew install pkg-config
-              brew install jansson
-              brew install llvm
+              brew install --bottle-tag=arm64_monterey jansson
               CFLAGS="-target arm64-apple-macos11" make yara
+              brew install llvm
               yarn build --target aarch64-apple-darwin
               strip -x *.node
           # This is an nixos env so its all a little special
