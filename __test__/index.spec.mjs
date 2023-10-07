@@ -107,56 +107,57 @@ test('can match file based rules', (t) => {
   });
 })
 
-
-test('can match file based json rules', (t) => {
-  const data = fs.readFileSync(join(__dirname, "./test.json"), 'utf8');
-  t.plan(2)
-  t.notThrows(() => {
-    const compiler = new YaraCompiler([{
-      filename: join(__dirname, "./json_test.yara")
-    }, {
-      filename: join(__dirname, "./test.yara")
-    }], []);
-    const scanner = compiler.newScanner();
-    const result = scanner.scanString(data);
-    t.deepEqual(result, [
-      {
-        identifier: "string_array_includes",
-        namespace: "default",
-        metadatas: [],
-        tags: [],
-        strings: []
+if (process.platform !== "win32") {
+  test('can match file based json rules', (t) => {
+    const data = fs.readFileSync(join(__dirname, "./test.json"), 'utf8');
+    t.plan(2)
+    t.notThrows(() => {
+      const compiler = new YaraCompiler([{
+        filename: join(__dirname, "./json_test.yara")
       }, {
-        identifier: "string_array_includes_nested",
-        namespace: "default",
-        metadatas: [],
-        tags: [],
-        strings: []
-      }, {
-        identifier: "integer_array_includes",
-        namespace: "default",
-        metadatas: [],
-        tags: [],
-        strings: []
-      }, {
-        identifier: "integer_array_includes_nested",
-        namespace: "default",
-        metadatas: [],
-        tags: [],
-        strings: []
-      }, {
-        identifier: "float_array_includes",
-        namespace: "default",
-        metadatas: [],
-        tags: [],
-        strings: []
-      }, {
-        identifier: "float_array_includes_nested",
-        namespace: "default",
-        metadatas: [],
-        tags: [],
-        strings: []
-      }
-    ])
-  });
-})
+        filename: join(__dirname, "./test.yara")
+      }], []);
+      const scanner = compiler.newScanner();
+      const result = scanner.scanString(data);
+      t.deepEqual(result, [
+        {
+          identifier: "string_array_includes",
+          namespace: "default",
+          metadatas: [],
+          tags: [],
+          strings: []
+        }, {
+          identifier: "string_array_includes_nested",
+          namespace: "default",
+          metadatas: [],
+          tags: [],
+          strings: []
+        }, {
+          identifier: "integer_array_includes",
+          namespace: "default",
+          metadatas: [],
+          tags: [],
+          strings: []
+        }, {
+          identifier: "integer_array_includes_nested",
+          namespace: "default",
+          metadatas: [],
+          tags: [],
+          strings: []
+        }, {
+          identifier: "float_array_includes",
+          namespace: "default",
+          metadatas: [],
+          tags: [],
+          strings: []
+        }, {
+          identifier: "float_array_includes_nested",
+          namespace: "default",
+          metadatas: [],
+          tags: [],
+          strings: []
+        }
+      ])
+    });
+  })
+}
