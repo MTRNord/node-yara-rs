@@ -8,6 +8,8 @@ LDFLAGS += -L/usr/local/lib
 JANSSON_LDFLAGS += $(LDFLAGS)
 endif
 
+LDFLAGS_JANSSON += -L$(BASE)/build/jansson/lib
+
 ifeq ($(findstring arm64,$(CFLAGS)),arm64)
 CFGOPTS += --host=aarch64-apple-darwin
 endif
@@ -68,7 +70,7 @@ yara: clean jansson
 	cd $(BASE)/deps/yara-$(YARA) && ./bootstrap.sh
 	cd $(BASE)/deps/yara-$(YARA) && \
 			CFLAGS="$(CFLAGS)" \
-			LDFLAGS="$(LDFLAGS)" \
+			LDFLAGS="$(LDFLAGS) $(LDFLAGS_JANSSON)" \
 			./configure \
 					$(CFGOPTS) \
 					--enable-cuckoo \
