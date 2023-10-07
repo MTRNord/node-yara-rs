@@ -39,11 +39,11 @@ jansson: clean
 			./configure \
 					$(CFGOPTS) \
 					--enable-static \
-					--disable-shared \
 					--with-pic \
 					--prefix=$(BASE)/build/jansson
 	cd $(BASE)/deps/jansson-$(JANSSON) && make
 	cd $(BASE)/deps/jansson-$(JANSSON) && make install
+	ls -lah $(BASE)/build/jansson/*
 
 yara: clean jansson
 	echo $(CFLAGS)
@@ -70,7 +70,7 @@ yara: clean jansson
 	cd $(BASE)/deps/yara-$(YARA) && ./bootstrap.sh
 	cd $(BASE)/deps/yara-$(YARA) && \
 			CFLAGS="$(CFLAGS)" \
-			LDFLAGS="$(LDFLAGS) $(LDFLAGS_JANSSON)" \
+			LDFLAGS="$(LDFLAGS_JANSSON) $(LDFLAGS)" \
 			./configure \
 					$(CFGOPTS) \
 					--enable-cuckoo \
