@@ -32,6 +32,8 @@ jobs:
               brew install automake
               brew install libtool
               brew install pkg-config
+              brew install jansson
+              brew install llvm
               make build
               strip -x *.node
           - host: windows-latest
@@ -41,7 +43,7 @@ jobs:
             target: x86_64-unknown-linux-gnu
             build: |-
               set -e &&
-              sudo apt-get install -y automake libtool make gcc pkg-config &&
+              sudo apt-get install -y automake libtool make gcc pkg-config libjansson-dev &&
               make debug_results &&
               make yara &&
               yarn build --target x86_64-unknown-linux-gnu &&
@@ -53,6 +55,8 @@ jobs:
               brew install automake
               brew install libtool
               brew install pkg-config
+              brew install jansson
+              brew install llvm
               CFLAGS="-target arm64-apple-macos11" make yara
               yarn build --target aarch64-apple-darwin
               strip -x *.node

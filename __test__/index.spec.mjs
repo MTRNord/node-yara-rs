@@ -1,6 +1,7 @@
 import test from 'ava'
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
+import * as fs from 'fs';
 import { YaraCompiler } from '../index.js'
 
 const TEST_RULE = "rule TestRule {\n    condition:\n        true\n}"
@@ -101,6 +102,60 @@ test('can match file based rules', (t) => {
             ],
           },
         ]
+      }
+    ])
+  });
+})
+
+
+test('can match file based json rules', (t) => {
+  const data = fs.readFileSync(join(__dirname, "./test.json"), 'utf8');
+  t.plan(2)
+  t.notThrows(() => {
+    const compiler = new YaraCompiler([{
+      filename: join(__dirname, "./json_test.yara")
+    }, {
+      filename: join(__dirname, "./test.yara")
+    }], []);
+    const scanner = compiler.newScanner();
+    const result = scanner.scanString(data);
+    t.deepEqual(result, [
+      {
+        identifier: "string_array_includes",
+        namespace: "default",
+        metadatas: [],
+        tags: [],
+        strings: []
+      }, {
+        identifier: "string_array_includes_nested",
+        namespace: "default",
+        metadatas: [],
+        tags: [],
+        strings: []
+      }, {
+        identifier: "integer_array_includes",
+        namespace: "default",
+        metadatas: [],
+        tags: [],
+        strings: []
+      }, {
+        identifier: "integer_array_includes_nested",
+        namespace: "default",
+        metadatas: [],
+        tags: [],
+        strings: []
+      }, {
+        identifier: "float_array_includes",
+        namespace: "default",
+        metadatas: [],
+        tags: [],
+        strings: []
+      }, {
+        identifier: "float_array_includes_nested",
+        namespace: "default",
+        metadatas: [],
+        tags: [],
+        strings: []
       }
     ])
   });

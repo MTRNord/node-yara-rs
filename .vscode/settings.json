@@ -1,0 +1,12 @@
+{
+    "files.associations": {
+        "*.rs": "rust",
+        "*.zonefile": "zone",
+        "system_error": "c",
+        "modules.h": "c",
+        "globals.h": "c",
+        "stdio.h": "c",
+        "jansson.h": "c",
+        "jansson_config.h": "c"
+    }
+}

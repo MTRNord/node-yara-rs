@@ -2,6 +2,7 @@
 edition = "2021"
 name = "mtrnord_node-yara-rs"
 version = "0.0.0"
+links = "jansson"
 
 [lib]
 crate-type = ["cdylib"]

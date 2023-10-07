@@ -197,4 +197,5 @@ Cargo.lock
 *.node
 
 deps/yara-*
+deps/jansson-*
 build
