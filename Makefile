@@ -6,6 +6,7 @@ CFLAGS  += -I/usr/local/include/node
 CFLAGS  += -I/usr/local/include
 LDFLAGS += -L/usr/local/lib
 JANSSON_LDFLAGS += $(LDFLAGS)
+IS_MACOS += true
 endif
 
 LDFLAGS_JANSSON += -L$(BASE)/build/jansson/lib
@@ -27,23 +28,25 @@ clean:
 	cargo clean
 
 jansson: clean
-	echo $(CFLAGS)
-	echo $(LDFLAGS)
-	echo $(JANSSON_LDFLAGS)
-	echo $(CC)
-	test -f $(BASE)/deps/jansson-$(JANSSON).tar.gz || curl -L -k https://github.com/akheron/jansson/releases/download/v$(JANSSON)/jansson-$(JANSSON).tar.gz > $(BASE)/deps/jansson-$(JANSSON).tar.gz
-	cd $(BASE)/deps && tar -xzvf jansson-$(JANSSON).tar.gz
-	cd $(BASE)/deps/jansson-$(JANSSON) && \
-			CFLAGS="$(CFLAGS)" \
-			LDFLAGS="$(JANSSON_LDFLAGS)" \
-			./configure \
-					$(CFGOPTS) \
-					--enable-static \
-					--with-pic \
-					--prefix=$(BASE)/build/jansson
-	cd $(BASE)/deps/jansson-$(JANSSON) && make
-	cd $(BASE)/deps/jansson-$(JANSSON) && make install
-	ls -lah $(BASE)/build/jansson/*
+	@if ! [ $(IS_MACOS) == "true" ]; then\
+		echo $(CFLAGS);\
+		echo $(LDFLAGS);\
+		echo $(JANSSON_LDFLAGS);\
+		echo $(CC);\
+		test -f $(BASE)/deps/jansson-$(JANSSON).tar.gz || curl -L -k https://github.com/akheron/jansson/releases/download/v$(JANSSON)/jansson-$(JANSSON).tar.gz > $(BASE)/deps/jansson-$(JANSSON).tar.gz;\
+		cd $(BASE)/deps && tar -xzvf jansson-$(JANSSON).tar.gz;\
+		cd $(BASE)/deps/jansson-$(JANSSON) && \
+				CFLAGS="$(CFLAGS)" \
+				LDFLAGS="$(JANSSON_LDFLAGS)" \
+				./configure \
+						$(CFGOPTS) \
+						--enable-static \
+						--with-pic \
+						--prefix=$(BASE)/build/jansson;\
+		cd $(BASE)/deps/jansson-$(JANSSON) && make;\
+		cd $(BASE)/deps/jansson-$(JANSSON) && make install;\
+		ls -lah $(BASE)/build/jansson/*;\
+	fi
 
 yara: clean jansson
 	echo $(CFLAGS)
