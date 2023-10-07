@@ -41,6 +41,7 @@ jansson: clean
 				./configure \
 						$(CFGOPTS) \
 						--enable-static \
+						--disable-shared \
 						--with-pic \
 						--prefix=$(BASE)/build/jansson;\
 		cd $(BASE)/deps/jansson-$(JANSSON) && make;\
