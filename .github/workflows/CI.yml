@@ -161,6 +161,9 @@ jobs:
       - name: List packages
         run: ls -R .
         shell: bash
+      - name: Cache cargo
+        if: ${{ matrix.settings.host == 'macos-latest' }}
+        run: brew install jansson
       - name: Test bindings
         run: yarn test
   test-linux-x64-gnu-binding:
