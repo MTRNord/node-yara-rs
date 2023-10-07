@@ -8,11 +8,13 @@ fn main() {
 
   // Workaround weird jansson linking
 
-  let base = env!("CARGO_MANIFEST_DIR");
-  let mut include_path = PathBuf::from(base);
-  include_path.push("build/jansson/lib");
+  if !cfg!(target_os = "windows") {
+    let base = env!("CARGO_MANIFEST_DIR");
+    let mut include_path = PathBuf::from(base);
+    include_path.push("build/jansson/lib");
 
-  println!("cargo:rustc-link-search=native={}", include_path.display());
-  println!("cargo:rustc-link-lib=static=jansson");
+    println!("cargo:rustc-link-search=native={}", include_path.display());
+    println!("cargo:rustc-link-lib=static=jansson");
+  }
   napi_build::setup();
 }
