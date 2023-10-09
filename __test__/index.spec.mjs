@@ -156,6 +156,24 @@ if (process.platform !== "win32") {
           metadatas: [],
           tags: [],
           strings: []
+        }, {
+          identifier: "dotted_key",
+          namespace: "default",
+          metadatas: [],
+          tags: [],
+          strings: []
+        }, {
+          identifier: "dotted_key_sub",
+          namespace: "default",
+          metadatas: [],
+          tags: [],
+          strings: []
+        }, {
+          identifier: "has_key_normal",
+          namespace: "default",
+          metadatas: [],
+          tags: [],
+          strings: []
         }
       ])
     });

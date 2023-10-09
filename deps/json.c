@@ -44,18 +44,31 @@ define_function(key_exists)
     // Split key into possible subcomponents - separated by '.'
     json_t *iter = json;
     char *token = strtok(key, ".");
+    char previousChar = '\0';
+    char *realToken = strdup(token);
     while (token != NULL)
     {
-        iter = json_object_get(iter, token);
+        previousChar = token[strlen(token)-1];
+        if (previousChar == '\\') {
+            realToken[strlen(realToken)-1] = '.';
+            token = strtok(NULL, ".");
+            strcat(realToken, token);
+        }
+        
+        iter = json_object_get(iter, realToken);
         if (iter == NULL)
         {
             return_integer(0);
         }
         token = strtok(NULL, ".");
+        if (token != NULL) {
+            strcpy(realToken, token);
+        }
     }
 
     free(key);
     free(token);
+    free(realToken);
 
     return_integer(1);
 }
@@ -76,10 +89,19 @@ define_function(value_exists_string)
     json_t *iter = json;
     char *token = strtok(key, ".");
     char *prevToken = strdup(token);
+    char previousChar = '\0';
+    char *realToken = strdup(token);
 
     while (token != NULL)
     {
-        iter = json_object_get(iter, token);
+        previousChar = token[strlen(token)-1];
+        if (previousChar == '\\') {
+            realToken[strlen(realToken)-1] = '.';
+            token = strtok(NULL, ".");
+            strcat(realToken, token);
+        }
+        
+        iter = json_object_get(iter, realToken);
         if (iter == NULL)
         {
             return_integer(0);
@@ -87,6 +109,9 @@ define_function(value_exists_string)
 
         strcpy(prevToken, token);
         token = strtok(NULL, ".");
+        if (token != NULL) {
+            strcpy(realToken, token);
+        }
     }
 
     const char *found = json_string_value(iter);
@@ -104,6 +129,7 @@ define_function(value_exists_string)
     free(value);
     free(prevToken);
     free(token);
+    free(realToken);
 
     return_integer(1);
 }
@@ -124,10 +150,19 @@ define_function(value_exists_integer)
     json_t *iter = json;
     char *token = strtok(key, ".");
     char *prevToken = strdup(token);
+    char previousChar = '\0';
+    char *realToken = strdup(token);
 
     while (token != NULL)
     {
-        iter = json_object_get(iter, token);
+        previousChar = token[strlen(token)-1];
+        if (previousChar == '\\') {
+            realToken[strlen(realToken)-1] = '.';
+            token = strtok(NULL, ".");
+            strcat(realToken, token);
+        }
+        
+        iter = json_object_get(iter, realToken);
         if (iter == NULL)
         {
             return_integer(0);
@@ -135,6 +170,9 @@ define_function(value_exists_integer)
 
         strcpy(prevToken, token);
         token = strtok(NULL, ".");
+        if (token != NULL) {
+            strcpy(realToken, token);
+        }
     }
 
     double foundNumber = json_number_value(iter);
@@ -152,6 +190,7 @@ define_function(value_exists_integer)
     free(key);
     free(prevToken);
     free(token);
+    free(realToken);
 
     return_integer(1);
 }
@@ -173,10 +212,19 @@ define_function(value_exists_regex)
     json_t *iter = json;
     char *token = strtok(key, ".");
     char *prevToken = strdup(token);
+    char previousChar = '\0';
+    char *realToken = strdup(token);
 
     while (token != NULL)
     {
-        iter = json_object_get(iter, token);
+        previousChar = token[strlen(token)-1];
+        if (previousChar == '\\') {
+            realToken[strlen(realToken)-1] = '.';
+            token = strtok(NULL, ".");
+            strcat(realToken, token);
+        }
+        
+        iter = json_object_get(iter, realToken);
         if (iter == NULL)
         {
             return_integer(0);
@@ -184,6 +232,9 @@ define_function(value_exists_regex)
 
         strcpy(prevToken, token);
         token = strtok(NULL, ".");
+        if (token != NULL) {
+            strcpy(realToken, token);
+        }
     }
 
     const char *found = json_string_value(iter);
@@ -200,6 +251,7 @@ define_function(value_exists_regex)
     free(key);
     free(prevToken);
     free(token);
+    free(realToken);
 
     return_integer(1);
 }
@@ -220,10 +272,19 @@ define_function(value_exists_float)
     json_t *iter = json;
     char *token = strtok(key, ".");
     char *prevToken = strdup(token);
+    char previousChar = '\0';
+    char *realToken = strdup(token);
 
     while (token != NULL)
     {
-        iter = json_object_get(iter, token);
+        previousChar = token[strlen(token)-1];
+        if (previousChar == '\\') {
+            realToken[strlen(realToken)-1] = '.';
+            token = strtok(NULL, ".");
+            strcat(realToken, token);
+        }
+        
+        iter = json_object_get(iter, realToken);
         if (iter == NULL)
         {
             return_integer(0);
@@ -231,6 +292,9 @@ define_function(value_exists_float)
 
         strcpy(prevToken, token);
         token = strtok(NULL, ".");
+        if (token != NULL) {
+            strcpy(realToken, token);
+        }
     }
 
     double found = json_number_value(iter);
@@ -247,6 +311,7 @@ define_function(value_exists_float)
     free(key);
     free(prevToken);
     free(token);
+    free(realToken);
 
     return_integer(1);
 }
@@ -267,10 +332,19 @@ define_function(string_array_includes)
     json_t *iter = json;
     char *token = strtok(key, ".");
     char *prevToken = strdup(token);
+    char previousChar = '\0';
+    char *realToken = strdup(token);
 
     while (token != NULL)
     {
-        iter = json_object_get(iter, token);
+        previousChar = token[strlen(token)-1];
+        if (previousChar == '\\') {
+            realToken[strlen(realToken)-1] = '.';
+            token = strtok(NULL, ".");
+            strcat(realToken, token);
+        }
+        
+        iter = json_object_get(iter, realToken);
         if (iter == NULL)
         {
             return_integer(0);
@@ -278,6 +352,9 @@ define_function(string_array_includes)
 
         strcpy(prevToken, token);
         token = strtok(NULL, ".");
+        if (token != NULL) {
+            strcpy(realToken, token);
+        }
     }
 
     json_t *array = iter;
@@ -298,10 +375,10 @@ define_function(string_array_includes)
 
     free(array);
     free(key);
-    free(key);
     free(value);
     free(prevToken);
     free(token);
+    free(realToken);
 
     return_integer(0);
 }
@@ -321,10 +398,19 @@ define_function(integer_array_includes)
     json_t *iter = json;
     char *token = strtok(key, ".");
     char *prevToken = strdup(token);
+    char previousChar = '\0';
+    char *realToken = strdup(token);
 
     while (token != NULL)
     {
-        iter = json_object_get(iter, token);
+        previousChar = token[strlen(token)-1];
+        if (previousChar == '\\') {
+            realToken[strlen(realToken)-1] = '.';
+            token = strtok(NULL, ".");
+            strcat(realToken, token);
+        }
+        
+        iter = json_object_get(iter, realToken);
         if (iter == NULL)
         {
             return_integer(0);
@@ -332,6 +418,9 @@ define_function(integer_array_includes)
 
         strcpy(prevToken, token);
         token = strtok(NULL, ".");
+        if (token != NULL) {
+            strcpy(realToken, token);
+        }
     }
 
     json_t *array = iter;
@@ -359,10 +448,10 @@ define_function(integer_array_includes)
 
     free(array);
     free(key);
-    free(key);
     free(value);
     free(prevToken);
     free(token);
+    free(realToken);
 
     return_integer(0);
 }
@@ -382,10 +471,19 @@ define_function(float_array_includes)
     json_t *iter = json;
     char *token = strtok(key, ".");
     char *prevToken = strdup(token);
+    char previousChar = '\0';
+    char *realToken = strdup(token);
 
     while (token != NULL)
     {
-        iter = json_object_get(iter, token);
+        previousChar = token[strlen(token)-1];
+        if (previousChar == '\\') {
+            realToken[strlen(realToken)-1] = '.';
+            token = strtok(NULL, ".");
+            strcat(realToken, token);
+        }
+        
+        iter = json_object_get(iter, realToken);
         if (iter == NULL)
         {
             return_integer(0);
@@ -393,6 +491,9 @@ define_function(float_array_includes)
 
         strcpy(prevToken, token);
         token = strtok(NULL, ".");
+        if (token != NULL) {
+            strcpy(realToken, token);
+        }
     }
 
     json_t *array = iter;
@@ -419,9 +520,9 @@ define_function(float_array_includes)
 
     free(array);
     free(key);
-    free(key);
     free(prevToken);
     free(token);
+    free(realToken);
 
     return_integer(0);
 }

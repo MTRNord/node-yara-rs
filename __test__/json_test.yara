@@ -41,3 +41,18 @@ rule float_array_includes_nested {
         json.float_array_includes("float.floatArray", 2.0) and
         json.float_array_includes("float.floatArray", 3.0)
 }
+
+rule dotted_key {
+    condition:
+        json.key_exists("dot\\.key")
+}
+
+rule dotted_key_sub {
+    condition:
+        json.key_exists("dot\\.key.subkey")
+}
+
+rule has_key_normal {
+    condition:
+        json.key_exists("normal_key")
+}
