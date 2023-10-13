@@ -1,3 +1,10 @@
+# node-yara-rs 0.6.1 (2023-10-13)
+
+### Bugfixes
+
+- Fix windows build
+
+
 # node-yara-rs 0.6.0 (2023-10-13)
 
 ### Features

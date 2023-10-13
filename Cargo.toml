@@ -20,7 +20,6 @@ yara = { version = "0.21.0", features = ["yara-static"] }
 yara = { version = "0.21.0", features = [
     "yara-static",
     "vendored",
-    "module-cuckoo",
     "module-macho",
     "module-hash",
 ] }
