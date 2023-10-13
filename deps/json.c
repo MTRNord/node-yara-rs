@@ -359,6 +359,10 @@ define_function(string_array_includes)
 
     json_t *array = iter;
     bool isArray = json_is_array(array);
+    if (!isArray)
+    {
+        return_integer(0);
+    }
 
     size_t index;
     json_t *val;
@@ -382,6 +386,7 @@ define_function(string_array_includes)
 
     return_integer(0);
 }
+
 // Integer Array includes
 define_function(integer_array_includes)
 {
@@ -448,13 +453,13 @@ define_function(integer_array_includes)
 
     free(array);
     free(key);
-    free(value);
     free(prevToken);
     free(token);
     free(realToken);
 
     return_integer(0);
 }
+
 // Float Array includes
 define_function(float_array_includes)
 {
@@ -527,6 +532,172 @@ define_function(float_array_includes)
     return_integer(0);
 }
 
+// Get String value
+define_function(string_get_value)
+{
+    char *key = strdup(string_argument(1));
+
+    json_t *json = yr_module()->data;
+    if (json == NULL)
+    {
+        return_string(YR_UNDEFINED);
+    }
+
+    // Split key into possible subcomponents - separated by '.'
+    json_t *iter = json;
+    char *token = strtok(key, ".");
+    char *prevToken = strdup(token);
+    char previousChar = '\0';
+    char *realToken = strdup(token);
+
+    while (token != NULL)
+    {
+        previousChar = token[strlen(token)-1];
+        if (previousChar == '\\') {
+            realToken[strlen(realToken)-1] = '.';
+            token = strtok(NULL, ".");
+            strcat(realToken, token);
+        }
+        
+        iter = json_object_get(iter, realToken);
+        if (iter == NULL)
+        {
+            return_string(YR_UNDEFINED);
+        }
+
+        strcpy(prevToken, token);
+        token = strtok(NULL, ".");
+        if (token != NULL) {
+            strcpy(realToken, token);
+        }
+    }
+
+    const char *found = json_string_value(iter);
+    if (found == NULL)
+    {
+        printf("no string value could be obtained from value at key\n");
+        return_string(YR_UNDEFINED);
+    }
+
+    free(key);
+    free(prevToken);
+    free(token);
+    free(realToken);
+
+    return_string(found);
+}
+
+// Get integer value
+define_function(integer_get_value)
+{
+    char *key = strdup(string_argument(1));
+
+    json_t *json = yr_module()->data;
+    if (json == NULL)
+    {
+        return_integer(YR_UNDEFINED);
+    }
+
+    // Split key into possible subcomponents - separated by '.'
+    json_t *iter = json;
+    char *token = strtok(key, ".");
+    char *prevToken = strdup(token);
+    char previousChar = '\0';
+    char *realToken = strdup(token);
+
+    while (token != NULL)
+    {
+        previousChar = token[strlen(token)-1];
+        if (previousChar == '\\') {
+            realToken[strlen(realToken)-1] = '.';
+            token = strtok(NULL, ".");
+            strcat(realToken, token);
+        }
+        
+        iter = json_object_get(iter, realToken);
+        if (iter == NULL)
+        {
+            return_integer(YR_UNDEFINED);
+        }
+
+        strcpy(prevToken, token);
+        token = strtok(NULL, ".");
+        if (token != NULL) {
+            strcpy(realToken, token);
+        }
+    }
+
+    double foundNumber = json_number_value(iter);
+    if (foundNumber == 0.0)
+    {
+        printf("no integer value could be obtained from value at key\n");
+        return_integer(YR_UNDEFINED);
+    }
+    int found = (int)foundNumber;
+
+    free(key);
+    free(prevToken);
+    free(token);
+    free(realToken);
+
+    return_integer(found);
+}
+
+// Get float value
+define_function(float_get_value)
+{
+    char *key = strdup(string_argument(1));
+
+    json_t *json = yr_module()->data;
+    if (json == NULL)
+    {
+        return_float(YR_UNDEFINED);
+    }
+
+    // Split key into possible subcomponents - separated by '.'
+    json_t *iter = json;
+    char *token = strtok(key, ".");
+    char *prevToken = strdup(token);
+    char previousChar = '\0';
+    char *realToken = strdup(token);
+
+    while (token != NULL)
+    {
+        previousChar = token[strlen(token)-1];
+        if (previousChar == '\\') {
+            realToken[strlen(realToken)-1] = '.';
+            token = strtok(NULL, ".");
+            strcat(realToken, token);
+        }
+        
+        iter = json_object_get(iter, realToken);
+        if (iter == NULL)
+        {
+            return_float(YR_UNDEFINED);
+        }
+
+        strcpy(prevToken, token);
+        token = strtok(NULL, ".");
+        if (token != NULL) {
+            strcpy(realToken, token);
+        }
+    }
+
+    double foundNumber = json_number_value(iter);
+    if (foundNumber == 0.0)
+    {
+        printf("no float value could be obtained from value at key\n");
+        return_float(YR_UNDEFINED);
+    }
+
+    free(key);
+    free(prevToken);
+    free(token);
+    free(realToken);
+
+    return_float(foundNumber);
+}
+
 begin_declarations;
 
 declare_function("key_exists", "s", "i", key_exists);
@@ -534,9 +705,12 @@ declare_function("value_exists", "ss", "i", value_exists_string);
 declare_function("value_exists", "si", "i", value_exists_integer);
 declare_function("value_exists", "sr", "i", value_exists_regex);
 declare_function("value_exists", "sf", "i", value_exists_float);
-declare_function("string_array_includes", "ss", "i", string_array_includes);
-declare_function("integer_array_includes", "si", "i", integer_array_includes);
-declare_function("float_array_includes", "sf", "i", float_array_includes);
+declare_function("array_includes", "ss", "i", string_array_includes);
+declare_function("array_includes", "si", "i", integer_array_includes);
+declare_function("array_includes", "sf", "i", float_array_includes);
+declare_function("get_string_value", "s", "s", string_get_value);
+declare_function("get_integer_value", "s", "i", integer_get_value);
+declare_function("get_float_value", "s", "f", float_get_value);
 end_declarations;
 
 int module_initialize(YR_MODULE *module)

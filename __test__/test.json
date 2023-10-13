@@ -50,5 +50,7 @@
     "dot.key": {
         "subkey": {}
     },
-    "normal_key": {}
+    "normal_key": {},
+    "integer_number": 42,
+    "float_number": 42.42
 }

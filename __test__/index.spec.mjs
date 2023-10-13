@@ -174,6 +174,24 @@ if (process.platform !== "win32") {
           metadatas: [],
           tags: [],
           strings: []
+        }, {
+          identifier: "get_string",
+          namespace: "default",
+          metadatas: [],
+          tags: [],
+          strings: []
+        }, {
+          identifier: "get_integer",
+          namespace: "default",
+          metadatas: [],
+          tags: [],
+          strings: []
+        }, {
+          identifier: "get_float",
+          namespace: "default",
+          metadatas: [],
+          tags: [],
+          strings: []
         }
       ])
     });
