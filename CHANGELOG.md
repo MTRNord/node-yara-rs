@@ -1,3 +1,10 @@
+# node-yara-rs 0.6.2 (2023-10-17)
+
+### Bugfixes
+
+- Also decode the utf8 bytes
+
+
 # node-yara-rs 0.6.1 (2023-10-13)
 
 ### Bugfixes

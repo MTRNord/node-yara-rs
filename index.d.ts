@@ -42,6 +42,8 @@ export interface YaraMatch {
   length: number
   /** Matched data. */
   data: Array<number>
+  /** If utf-8 then we decode it here */
+  stringData?: string
 }
 /**
  * An interface to use yara with node in a stable manner using Rust

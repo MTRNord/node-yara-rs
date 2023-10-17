@@ -81,6 +81,8 @@ pub struct YaraMatch {
   pub length: i64,
   /// Matched data.
   pub data: Vec<u8>,
+  /// If utf-8 then we decode it here
+  pub string_data: Option<String>,
 }
 
 #[napi]
@@ -206,11 +208,20 @@ impl YaraScanner {
             matches: string
               .matches
               .iter()
-              .map(|matches| YaraMatch {
-                base: matches.base as i64,
-                offset: matches.offset as i64,
-                length: matches.length as i64,
-                data: matches.data.clone(),
+              .map(|matches| {
+                let string = String::from_utf8(matches.data.clone());
+                let string_data = if let Ok(string_data) = string {
+                  Some(string_data)
+                } else {
+                  None
+                };
+                YaraMatch {
+                  base: matches.base as i64,
+                  offset: matches.offset as i64,
+                  length: matches.length as i64,
+                  data: matches.data.clone(),
+                  string_data,
+                }
               })
               .collect(),
           })

@@ -98,6 +98,7 @@ test('can match file based rules', (t) => {
                 ],
                 length: 4,
                 offset: 0,
+                stringData: "Test"
               },
             ],
           },
